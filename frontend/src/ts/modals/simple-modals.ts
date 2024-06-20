@@ -31,7 +31,7 @@ import AnimatedModal, {
   HideOptions,
   ShowOptions,
 } from "../utils/animated-modal";
-import { CustomThemeColors } from "@shared/contract/shared/config";
+import { CustomThemeColors } from "shared/contract/shared/config";
 
 type Input = {
   placeholder?: string;
