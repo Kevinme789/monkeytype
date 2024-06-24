@@ -38,6 +38,7 @@ import { ZodIssue } from "zod";
 import { MonkeyValidationError } from "shared/contract/shared/types";
 import { AppRoute, AppRouter } from "@ts-rest/core";
 import { addRedocMiddlewares } from "./redoc";
+import { authenticateTsRestRequest } from "../../middlewares/auth";
 
 const pathOverride = process.env["API_PATH_OVERRIDE"];
 const BASE_ROUTE = pathOverride !== undefined ? `/${pathOverride}` : "";
@@ -91,6 +92,7 @@ function applyTsRestApiRoutes(app: IRouter): void {
         validationErrors: issues.map(prettyErrorMessage),
       } as MonkeyValidationError);
     },
+    globalMiddleware: [authenticateTsRestRequest()],
   });
 }
 
