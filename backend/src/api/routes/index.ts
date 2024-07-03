@@ -82,13 +82,10 @@ function applyTsRestApiRoutes(app: IRouter): void {
     jsonQuery: true,
     requestValidationErrorHandler(err, req, res, next) {
       if (err.body?.issues === undefined) return next();
-      const issues = err.body?.issues;
-      res.status(400).json({
-        message:
-          issues.length === 1
-            ? prettyErrorMessage(issues[0])
-            : "multiple validation errors",
-        validationErrors: issues.map(prettyErrorMessage),
+      const issues = err.body?.issues.map(prettyErrorMessage);
+      res.status(422).json({
+        message: issues[0],
+        validationErrors: issues,
       } as MonkeyValidationError);
     },
     globalMiddleware: [authenticateTsRestRequest()],
@@ -97,7 +94,8 @@ function applyTsRestApiRoutes(app: IRouter): void {
 
 function prettyErrorMessage(issue: ZodIssue | undefined): string {
   if (issue === undefined) return "";
-  return `"${issue.path.join(".")}" ${issue.message}`;
+  const path = issue.path.length > 0 ? `"${issue.path.join(".")}" ` : "";
+  return `${path}${issue.message}`;
 }
 
 function applyApiRoutes(app: Application): void {
